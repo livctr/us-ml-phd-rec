@@ -31,15 +31,15 @@ class DataPaths:
     FRONTEND_ITA_PATH = os.path.join(FRONTEND_EMBD_PATH, 'id_title_author')
     FRONTEND_WEIGHTS_PATH = os.path.join(FRONTEND_EMBD_PATH, 'weights.pt')
 
-
-    # create FRONTEND_DIR PROF_DIR CONFERENCE_DIR
+    # create BASE_DIR LOG_DIR FRONTEND_DIR PROF_DIR CONFERENCE_DIR PAPER_DIR
 
     @staticmethod
     def ensure_directories():
-        # Create the directories if they do not exist
-        os.makedirs(DataPaths.RAW_DATA_DIR, exist_ok=True)
-        os.makedirs(DataPaths.PROCESSED_DATA_DIR, exist_ok=True)
-        os.makedirs(DataPaths.MODEL_OUTPUT_DIR, exist_ok=True)
-
-# Call this function early in your pipeline
-DataPaths.ensure_directories()
+        # create BASE_DIR LOG_DIR FRONTEND_DIR PROF_DIR CONFERENCE_DIR PAPER_DIR
+        for directory in [DataPaths.BASE_DIR,
+                          DataPaths.LOG_DIR,
+                          DataPaths.FRONTEND_DIR,
+                          DataPaths.PROF_DIR,
+                          DataPaths.CONFERENCE_DIR,
+                          DataPaths.PAPER_DIR]:
+            os.makedirs(directory, exist_ok=True)

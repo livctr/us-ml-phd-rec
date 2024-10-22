@@ -258,5 +258,6 @@ def stats():
 
 
 if __name__ == "__main__":
+    DataPaths.ensure_directories()
     main()
     stats()
