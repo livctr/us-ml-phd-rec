@@ -1,12 +1,12 @@
 from collections import Counter, defaultdict
 import json
-from operator import itemgetter
-from typing import List
 
 from datasets import Dataset
 import torch
 import torch.nn.functional as F
 from transformers import AutoTokenizer, AutoModel
+
+from data_pipeline.config import DataPaths
 
 
 class EmbeddingProcessor:
@@ -63,23 +63,19 @@ class EmbeddingProcessor:
         ds_with_embeddings.save_to_disk(save_path)
         print(f"Dataset with embeddings saved to {save_path}")
 
-import os
 
 class Recommender:
     def __init__(self,
                  embedding_processor: EmbeddingProcessor,
-                 frontend_embds_path: str = "data/frontend_data/all-mpnet-base-v2-embds",
-                 frontend_id2professor_path: str = "data/frontend_data/arxiv_id2professor.json",
-                 frontend_us_professor_path: str = "data/frontend_data/us_professor.json",
+                 ita_path: str = DataPaths.FRONTEND_ITA_PATH,
+                 weights_path: str = DataPaths.FRONTEND_WEIGHTS_PATH,
+                 frontend_us_professor_path: str = DataPaths.FRONTEND_PROF_PATH,
     ):
         self.embedding_processor = embedding_processor
-        self.ita = Dataset.load_from_disk(os.path.join(frontend_embds_path, "id_title_author"))
-        self.embds = torch.load(os.path.join(frontend_embds_path, "weights.pt"), weights_only=True)
-
-        # with open(frontend_id2professor_path, 'r') as f:
-        #     self.id2professors = json.load(f)
+        self.ita = Dataset.load_from_disk(ita_path)
+        self.embds = torch.load(weights_path, weights_only=True)
+        # dictionary with professor names as keys and their metadata as values
         with open(frontend_us_professor_path, 'r') as f:
-            # dictionary with professor names as keys and their metadata as values
             self.us_professor_profiles = json.load(f)
     
     def get_top_k(self, query: str, top_k: int = 5):

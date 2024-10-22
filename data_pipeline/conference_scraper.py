@@ -1,4 +1,4 @@
-"""Scrape data from some famous ML conferences and saves into data/conference.
+"""Scrape data from some famous ML conferences and saves into `DataPaths.CONFERENCE_DIR`.
 
 Every scrape function returns a list of 3-lists of the form
     [paper_title, paper_authors, paper_url].
@@ -36,8 +36,8 @@ import time
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
+from data_pipeline.config import DataPaths
 
-SAVE_DIR = "data/conference"
 
 def scrape_nips(year):
     nips_url = f"https://papers.nips.cc/paper/{year}"
@@ -199,8 +199,8 @@ def main():
     }
 
     def load_progress():
-        if os.path.exists(SAVE_DIR):
-            file_paths = os.listdir(SAVE_DIR)
+        if os.path.exists(DataPaths.CONFERENCE_DIR):
+            file_paths = os.listdir(DataPaths.CONFERENCE_DIR)
             file_paths = [file_path for file_path in file_paths if file_path.endswith('.json')]
             file_paths = [file_path.split('.')[0] for file_path in file_paths]
             return set(file_paths)
@@ -214,7 +214,7 @@ def main():
         with open(file_path, 'a') as f:
             f.write(conference + ': ' + msg + '\n')
 
-    os.makedirs(SAVE_DIR, exist_ok=True)
+    os.makedirs(DataPaths.CONFERENCE_DIR, exist_ok=True)
 
     # Load previous progress
     scraped_conferences = load_progress()
@@ -232,7 +232,7 @@ def main():
         try:
 
             print(f"Scraping {conference}")
-            save_path = os.path.join(SAVE_DIR, f"{conference}.json")
+            save_path = os.path.join(DataPaths.CONFERENCE_DIR, f"{conference}.json")
             conference_items = scrape_function()
             save_to_file(conference_items, save_path)
             print(f"Saved {conference} to {str(save_path)}")
@@ -249,8 +249,8 @@ def main():
 
 def stats():
     total = 0
-    for fname in os.listdir(SAVE_DIR):
-        with open(os.path.join(SAVE_DIR, fname), 'r') as file:
+    for fname in os.listdir(DataPaths.CONFERENCE_DIR):
+        with open(os.path.join(DataPaths.CONFERENCE_DIR, fname), 'r') as file:
             num_lines = sum(1 for _ in file)
             print(fname + ": " + str(num_lines) + " lines")
             total += num_lines

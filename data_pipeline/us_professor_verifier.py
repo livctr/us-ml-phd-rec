@@ -13,6 +13,7 @@ import regex as re
 from tqdm import tqdm
 
 from data_pipeline.conference_scraper import get_authors
+from data_pipeline.config import DataPaths
 
 
 _ = load_dotenv(find_dotenv())
@@ -161,7 +162,7 @@ def check_json(profile):
 
 def save_json(profiles, file_path):
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    with open(file_path, 'w') as file:  # appending just the new ones would be better
+    with open(file_path, 'w') as file:  # TODO: in the future use append mode
         json.dump(profiles, file, indent=4)
 
 def load_json(file_path):
@@ -212,7 +213,7 @@ def research_person(person_name, client, progress_log, us_professor_profiles, no
     extract_search_results(person_name, progress_log, client, us_professor_profiles, not_us_professor_profiles, top_hits)
 
 
-def get_authors(save_dir="data/conference", min_papers=3, ignore_first_author=True):
+def get_authors(min_papers=3, ignore_first_author=True):
     """
     Reduce the list of authors to those with at least `min_papers` papers for
     which they are not first authors. Ignores solo-authored papers and papers
@@ -222,11 +223,11 @@ def get_authors(save_dir="data/conference", min_papers=3, ignore_first_author=Tr
     monetarily expensive. Feel free to edit if you have more resources.
     """
     authors = defaultdict(int)
-    for fname in os.listdir(save_dir):
+    for fname in os.listdir(DataPaths.CONFERENCE_DIR):
         if not fname.endswith('.json'):
             continue
 
-        with open(os.path.join(save_dir, fname), 'r') as file:
+        with open(os.path.join(DataPaths.CONFERENCE_DIR, fname), 'r') as file:
             for line in file:
                 item = json.loads(line)
                 paper_authors = [x.strip() for x in item[1].split(",")]
@@ -242,8 +243,8 @@ def get_authors(save_dir="data/conference", min_papers=3, ignore_first_author=Tr
                     authors[paper_authors[i]] += 1
 
     authors = {k: v for k, v in authors.items() if v >= min_papers}
-    os.makedirs(save_dir, exist_ok=True)
-    with open(os.path.join(save_dir, "authors.txt"), 'w') as f:
+    os.makedirs(DataPaths.CONFERENCE_DIR, exist_ok=True)
+    with open(DataPaths.AUTHORS_PATH, 'w') as f:
         for k, v in authors.items():
             f.write(f"{k}\t{v}\n")
     return authors
@@ -254,7 +255,7 @@ def research_conference_profiles(save_freq=20):
     NOTE: cannot deal w/ interrupts and continue from past progress.
     """
 
-    authors = get_authors("data/conference")
+    authors = get_authors()
     person_names = list(authors.keys())
 
     client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
@@ -264,10 +265,10 @@ def research_conference_profiles(save_freq=20):
     not_us_professor_profiles = []
 
     def log_save_print(progress_log, us_professor_profiles, not_us_professor_profiles, i):
-        log_progress_to_file(progress_log, 'logs/progress_log.tmp')
-        save_json(us_professor_profiles, 'data/professor/us_professor.json')
-        save_json(not_us_professor_profiles, 'data/professor/not_us_professor.json')
-        print(f"Saved profiles to data/professor/us_professor.json and data/professor/not_us_professor.json after processing {i} people")
+        log_progress_to_file(progress_log, DataPaths.PROGRESS_LOG_PATH)
+        save_json(us_professor_profiles, DataPaths.US_PROF_PATH)
+        save_json(not_us_professor_profiles, DataPaths.NOT_US_PROF_PATH)
+        print(f"Saved profiles to {DataPaths.US_PROF_PATH} and {DataPaths.NOT_US_PROF_PATH} after processing {i} people")
 
     for i in range(len(person_names)):
         research_person(person_names[i], client, progress_log, us_professor_profiles, not_us_professor_profiles)
@@ -281,7 +282,7 @@ def batch_search_person(person_names, progress_log, save_freq=20):
     """Searches everyone given in `person_names`."""
     # might start and stop, pull from previous efforts
     try:
-        prev_researched_authors = load_json("data/professor/search_results.json")
+        prev_researched_authors = load_json(DataPaths.SEARCH_RESULTS_PATH)
     except:
         prev_researched_authors = []
     ignore_set = set([x[0] for x in prev_researched_authors])
@@ -304,18 +305,17 @@ def batch_search_person(person_names, progress_log, save_freq=20):
             data.append([person_names[i], top_hits])
 
         if i % save_freq == 0:
-            save_json(data, "data/professor/search_results.json")
-            log_progress_to_file(progress_log, 'logs/progress_log.tmp')
+            save_json(data, DataPaths.SEARCH_RESULTS_PATH)
+            log_progress_to_file(progress_log, DataPaths.PROGRESS_LOG_PATH)
 
         # 3 queries per second max
         wait_time = max(time.time() - (query_start + 0.334), 0.0)
         time.sleep(wait_time)
 
-    save_json(data, "data/professor/search_results.json")
-    log_progress_to_file(progress_log, 'logs/progress_log.tmp')
+    save_json(data, DataPaths.SEARCH_RESULTS_PATH)
+    log_progress_to_file(progress_log, DataPaths.PROGRESS_LOG_PATH)
 
 def write_batch_files(search_results_path,
-                      prompt_data_path_prefix,
                       model="gpt-4o-mini",
                       max_tokens=1000,
                       temperature=0.0,
@@ -348,7 +348,7 @@ def write_batch_files(search_results_path,
 
     batch_paths = []
     for i in range(0, len(prompt_datas) // batch_size + 1):
-        prompt_data_path = f"{prompt_data_path_prefix}_{i}.jsonl"
+        prompt_data_path = f"{DataPaths.PROMPT_DATA_PREFIX}_{i:04d}.jsonl"
         batch_range = i * batch_size, (min(len(prompt_datas), (i + 1) * batch_size))
         with open(prompt_data_path, "w") as f:
             for prompt_data in prompt_datas[batch_range[0]:batch_range[1]]:
@@ -357,7 +357,7 @@ def write_batch_files(search_results_path,
 
     return batch_paths
 
-def send_batch_files(prompt_data_path_prefix, batch_paths, client, timeout=24*60*60):
+def send_batch_files(batch_paths, client, timeout=24*60*60):
     """Create and send the batch request to API endpoint."""
     batches = []
 
@@ -391,10 +391,8 @@ def send_batch_files(prompt_data_path_prefix, batch_paths, client, timeout=24*60
         batches.append(batch)
 
     # Keeps track of the paths to the batch files
-    with open(f"{prompt_data_path_prefix}_batches.pkl", "wb") as f:
+    with open(f"{DataPaths.PROMPT_DATA_PREFIX}_batches.pkl", "wb") as f:
         pickle.dump(batches, f)
-    with open(f"{prompt_data_path_prefix}_ids.txt", "w") as f:
-        f.write("\n".join([x.id for x in batches]))
     return batches
 
 def retrieve_batch_output(client, batch_id):
@@ -450,14 +448,14 @@ def batch_process_llm_output(client, batches):
                     print(f"Failed to parse json object `{json_obj}`: {e2}")
                     progress_log.append(f"Failed UNKNOWN: Parsed LLM output: {e2}")
 
-    with open("data/professor/us_professor.json", 'w') as file:
+    with open(DataPaths.US_PROF_PATH, 'w') as file:
         json.dump(us_professor_profiles, file, indent=4)
 
-    with open("data/professor/not_us_professor.json", 'w') as file:
+    with open(DataPaths.NOT_US_PROF_PATH, 'w') as file:
         json.dump(not_us_professor_profiles, file, indent=4)
 
-def create_frontend_data(us_professor_profiles_path="data/professor/us_professor.json"):
-    with open(us_professor_profiles_path, 'r') as file:
+def create_professor_frontend_data():
+    with open(DataPaths.US_PROF_PATH, 'r') as file:
         us_professor_profiles = json.load(file)
 
     professors_dict = {
@@ -469,7 +467,7 @@ def create_frontend_data(us_professor_profiles_path="data/professor/us_professor
         for professor in us_professor_profiles
     }
 
-    with open("data/frontend_data/us_professor.json", 'w') as file:
+    with open(DataPaths.FRONTEND_PROF_PATH, 'w') as file:
         json.dump(professors_dict, file)
 
 def main():
@@ -505,24 +503,22 @@ def main():
 
     args = parser.parse_args()
 
-    prompt_data_path_prefix = "data/professor/prompt_data"
-
     if args.batch_search:
-        authors = get_authors("data/conference")
+        authors = get_authors()
         authors_list = list(authors.keys())
         print("Researching people...")
         progress_log = []
         batch_search_person(authors_list, progress_log, save_freq=20)
     elif args.batch_analyze:
         client = OpenAI()
-        batch_paths = write_batch_files("data/professor/search_results.json", prompt_data_path_prefix)
-        send_batch_files(prompt_data_path_prefix, batch_paths, client)
+        batch_paths = write_batch_files(DataPaths.SEARCH_RESULTS_PATH)
+        send_batch_files(batch_paths, client)
     elif args.batch_retrieve:
         client = OpenAI()
-        with open(f"{prompt_data_path_prefix}_batches.pkl", "rb") as f:
+        with open(f"{DataPaths.PROMPT_DATA_PREFIX}_batches.pkl", "rb") as f:
             batches = pickle.load(f)
         batch_process_llm_output(client, batches)
-        create_frontend_data()
+        create_professor_frontend_data()
     else:
         raise ValueError("Please specify --batch_search, --batch_analyze, or --batch_retrieve.")
 
