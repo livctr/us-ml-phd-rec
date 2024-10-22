@@ -1,12 +1,1 @@
-python-dotenv
-openai
-langchain-together
-lxml
-
-einops
-torch and everything else
-datasets
-transformers
-
-datasets
-transformers
+streamlit

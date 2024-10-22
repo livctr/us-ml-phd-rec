@@ -6,7 +6,7 @@ Disclaimer: results are not 100% accurate and there is likely some bias to how p
 
 First, a list of authors are gathered from recent conference proceedings. A batched RAG pipeline is used to determine which persons are U.S. professors (unsure how accurate the LLM here is). This can be reproduced as follows:
 
-#### Repeat research until satisfactory
+#### Repeat scrape until satisfactory
 
 ```python
 # Scrape top conferences for potential U.S.-based professors, ~45 mins
@@ -44,5 +44,13 @@ python -m data_pipeline.us_professor_verifier --batch_retrieve
 #### Extract embeddings for the relevant papers
 ```python
 # Fetch arxiv data and extract embeddings
-python -m data_pipeline.download_arxiv_kaggle
+python -m data_pipeline.paper_embeddings_extractor
+```
+
+### Run streamlit
+
+```python
+
+streamlit run streamlit.py
+
 ```

@@ -452,8 +452,25 @@ def batch_process_llm_output(client, batches):
 
     with open("data/professor/us_professor.json", 'w') as file:
         json.dump(us_professor_profiles, file, indent=4)
+
     with open("data/professor/not_us_professor.json", 'w') as file:
         json.dump(not_us_professor_profiles, file, indent=4)
+
+def create_frontend_data(us_professor_profiles_path="data/professor/us_professor.json"):
+    with open(us_professor_profiles_path, 'r') as file:
+        us_professor_profiles = json.load(file)
+
+    professors_dict = {
+        professor['name']: {
+            'title': professor['title'],
+            'department': professor['department'],
+            'university': professor['university']
+        }
+        for professor in us_professor_profiles
+    }
+
+    with open("data/frontend_data/us_professor.json", 'w') as file:
+        json.dump(professors_dict, file)
 
 def main():
     import argparse
@@ -505,6 +522,7 @@ def main():
         with open(f"{prompt_data_path_prefix}_batches.pkl", "rb") as f:
             batches = pickle.load(f)
         batch_process_llm_output(client, batches)
+        create_frontend_data()
     else:
         raise ValueError("Please specify --batch_search, --batch_analyze, or --batch_retrieve.")
 
