@@ -12,7 +12,6 @@ from openai import OpenAI
 import regex as re
 from tqdm import tqdm
 
-from data_pipeline.conference_scraper import get_authors
 from data_pipeline.config import DataPaths
 
 

@@ -26,7 +26,6 @@ ICLR, ICCV, ECCV, ACL, NAACL, and many others.
 -----------
 """
 
-from collections import defaultdict
 from functools import partial
 import json
 import os

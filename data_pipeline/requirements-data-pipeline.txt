@@ -1,0 +1,11 @@
+beautifulsoup4
+dotenv
+datasets
+kaggle
+langchain
+numpy
+openai
+pandas
+regex
+torch
+tqdm
