@@ -25,7 +25,7 @@ class DataPaths:
     EMBD_PATH = os.path.join(PAPER_DIR, EMBD_MODEL)
     PAPER_DATA_PATH = os.path.join(PAPER_DIR, "paper_data")
 
-    FRONTEND_DIR = os.path.join('frontend_data')
+    FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend_data')
     FRONTEND_PROF_PATH = os.path.join(FRONTEND_DIR, 'us_professor.json')
     FRONTEND_EMBD_PATH = os.path.join(FRONTEND_DIR, EMBD_MODEL)  # contains id, title, author, weights
     FRONTEND_ITA_PATH = os.path.join(FRONTEND_EMBD_PATH, 'id_title_author')
