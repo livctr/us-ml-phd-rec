@@ -1,7 +1,7 @@
 ---
 title: USMLPhDRecommender
 emoji: 😎
-colorFrom: orange
+colorFrom: blue
 colorTo: purple
 sdk: streamlit
 python_version: 3.11
