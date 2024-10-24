@@ -4,14 +4,6 @@ from core.recommender import EmbeddingProcessor, Recommender
 
 st.title("U.S. ML PhD Faculty Advisor Recommender")
 
-# Define CSS for light and dark mode toggle
-def load_css(css_file):
-    with open(css_file, "r") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
-load_css("frontend/styles.css")
-
-
 # Set up
 embedding_processor = EmbeddingProcessor()
 recommender = Recommender(embedding_processor)
