@@ -21,7 +21,7 @@ pinned: false
 
 **Disclaimer**: This system should only be used for informational and exploratory purposes. **It will be out-of-date after the 2024 application cycle (applying for Fall 2025).* The data pipeline is based on data from selected ML conferences, OpenAI GPT-4o-mini, and heuristics. It is guaranteed that *IT MISSES MANY VERY WELL-QUALIFIED PROFESSORS*. Recommendations are not definitive and should not replace personal research, discussions with your professors at your current institutions, and direct communication with universities. Further, they are only a proxy for research alignment. Many other factors (e.g. work style, your career goals, location, etc.) need to be considered when making a decision about PhD programs. The system is limited in that it may have incomplete or biased data (the data pipeline is described below). Also, users should independently verify that the information provided is accurate, that their potential advisors are looking for PhD students, and that they are applying to the correct advisor at the correct institution (there are a few name collisions, which the pipeline doesn’t handle). Again, the recommendations should serve as an exploratory tool, and it is the responsibility of the user to do their due diligence and research when making decisions on where and how to apply, as well as their final decision. Good luck!
 
-To get started, click on the streamlit demo!
+To get started, click on the streamlit demo **[HERE](https://huggingface.co/spaces/livctr/USMLPhDRecommender)**!
 
 To run locally, `git clone` the repo. Then, create a conda environment and run `pip install -r requirements.txt`. Run with `streamlit run USMLPhDRecommender.py`.
 

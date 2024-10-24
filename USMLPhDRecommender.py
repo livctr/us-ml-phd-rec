@@ -4,6 +4,9 @@ from core.recommender import EmbeddingProcessor, Recommender
 
 st.title("U.S. ML PhD Faculty Advisor Recommender")
 
+st.write("See the code on [GitHub](https://github.com/livctr/us-ml-phd-rec.git) on a disclaimer and how to use.")
+st.write("")
+
 # Set up
 embedding_processor = EmbeddingProcessor()
 recommender = Recommender(embedding_processor)
