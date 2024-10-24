@@ -1,3 +1,20 @@
+---
+title: USMLPhDRecommender
+emoji: 😎
+colorFrom: orange
+colorTo: purple
+sdk: streamlit
+python_version: 3.11
+sdk_version: 1.25.0
+suggested_hardware: "cpu-basic"
+suggested_storage: "small"
+app_file: USMLPhDRecommender.py
+header: default
+short_description: "U.S. ML PhD Recommender"
+pinned: false
+---
+
+
 # U.S. ML PhD Recomendation System
 
 ## Usage
@@ -85,13 +102,3 @@ streamlit run USMLPhDRecommender.py
 ```
 
 ## HuggingFace Space Configuration
----
-title: USMLPhDRecommender
-emoji: 😊
-colorFrom: orange
-colorTo: purple
-sdk: streamlit
-sdk_version: "1.25.0"
-app_file: USMLPhDRecommender.py
-pinned: false
----
