@@ -1,4 +1,4 @@
-"""Scrape data from some famous ML conferences and saves into `DataPaths.CONFERENCE_DIR`.
+"""Scrape data from some famous ML conferences and save to `DataPaths.CONFERENCE_DIR`.
 
 Every scrape function returns a list of 3-lists of the form
     [paper_title, paper_authors, paper_url].
@@ -16,13 +16,12 @@ CVPR: 2023, 2024
 
 Disclaimer
 -----------
-The choice of conferences was sourced from here:
+The choice of conferences is sourced from here:
 https://www.kaggle.com/discussions/getting-started/115799
 
-The priority of including certain conferences and tracks was based on a 1st-year PhD's
-judgment. Some very top conferences were excluded due to higher activation energy to
-scrape data and/or the ignorance of the 1st-year PhD. Some notable exceptions include
-ICLR, ICCV, ECCV, ACL, NAACL, and many others.
+The inclusion of certain conferences and tracks is based on arbitrary judgment. Some
+very top conferences were excluded due to difficulty in scraping data and limited
+time. Some notable exceptions include ICLR, ICCV, ECCV, ACL, NAACL, and many others.
 -----------
 """
 
