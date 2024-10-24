@@ -100,5 +100,3 @@ python -m data_pipeline.paper_embeddings_extractor
 # Run the streamlit application
 streamlit run USMLPhDRecommender.py
 ```
-
-## HuggingFace Space Configuration
