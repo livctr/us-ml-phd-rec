@@ -2,11 +2,11 @@
 
 ## Usage
 
-**Disclaimer**: This system should only be used for informational and exploratory purposes. The data pipeline is based on data from selected ML conferences, OpenAI GPT-4o-mini, and heuristics. It is guaranteed that *IT MISSES MANY VERY WELL-QUALIFIED PROFESSORS*. Recommendations are not definitive and should not replace personal research, discussions with your professors at your current institutions, and direct communication with universities. Further, they are only a proxy for research alignment. Many other factors (e.g. work style, your career goals, location, etc.) need to be considered when making a decision about PhD programs. The system is limited in that it may have incomplete or biased data (the data pipeline is described below). Also, users should independently verify that the information provided is accurate, that their potential advisors are looking for PhD students, and that they are applying to the correct advisor at the correct institution (there are a few name collisions, which the pipeline doesn’t handle). Again, the recommendations should serve as an exploratory tool, and it is the responsibility of the user to do their due diligence and research when making decisions on where and how to apply, as well as their final decision.
+**Disclaimer**: This system should only be used for informational and exploratory purposes. **It will be out-of-date after the 2024 application cycle (applying for Fall 2025).* The data pipeline is based on data from selected ML conferences, OpenAI GPT-4o-mini, and heuristics. It is guaranteed that *IT MISSES MANY VERY WELL-QUALIFIED PROFESSORS*. Recommendations are not definitive and should not replace personal research, discussions with your professors at your current institutions, and direct communication with universities. Further, they are only a proxy for research alignment. Many other factors (e.g. work style, your career goals, location, etc.) need to be considered when making a decision about PhD programs. The system is limited in that it may have incomplete or biased data (the data pipeline is described below). Also, users should independently verify that the information provided is accurate, that their potential advisors are looking for PhD students, and that they are applying to the correct advisor at the correct institution (there are a few name collisions, which the pipeline doesn’t handle). Again, the recommendations should serve as an exploratory tool, and it is the responsibility of the user to do their due diligence and research when making decisions on where and how to apply, as well as their final decision. Good luck!
 
 To get started, click on the streamlit demo!
 
-To run locally, `git clone` the repo. Then, `pip install -r requirements.txt`.
+To run locally, `git clone` the repo. Then, create a conda environment and run `pip install -r requirements.txt`. Run with `streamlit run USMLPhDRecommender.py`.
 
 ## Overview of Data Pipeline
 
@@ -27,8 +27,8 @@ To run locally, `git clone` the repo. Then, `pip install -r requirements.txt`.
 
 ### Possibilities for improvement
 - Better embeddings: The current methodology to embed papers simply packages the title and abstract as input to the LLM. An extra step can be done in which an LLM extracts the topic, insights, methodologies, etc. in the papers so that there is more focus on content.
-- Model: At the time of writing, `gte-Qwen2-7B-instruct` appears to be the best at clustering in the arXiv section of the MTEB benchmark ([leaderboard](https://huggingface.co/spaces/mteb/leaderboard)). More powerful models can be used, if they can somehow also be deployed.
-- Narrow scope: due to limited financial resources, only a select number of conferences and professors are explored.
+- Better Model: At the time of writing, `gte-Qwen2-7B-instruct` appears to be the best at clustering in the arXiv section of the MTEB benchmark ([leaderboard](https://huggingface.co/spaces/mteb/leaderboard)). More powerful models can be used, if they can somehow also be deployed.
+- Larger scope: due to limited financial resources, only a select number of conferences and professors are explored. The pipeline can be re-purposed to explore other exciting research areas outside of ML.
 - Handling name collisions.
 
 ### Selected conferences
@@ -43,7 +43,7 @@ To run locally, `git clone` the repo. Then, `pip install -r requirements.txt`.
 
 ## Reproducing the Project
 
-The `data_pipeline` requires more packages. Please pip install them:
+The `data_pipeline` requires more packages. Please pip install them in your conda environment:
 
 ```bash
 cd data_pipeline
