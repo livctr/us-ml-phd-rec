@@ -1,4 +1,4 @@
-"""Pulls papers from arxiv."""
+"""Pulls papers from arxiv and gets their embeddings."""
 from collections import defaultdict
 from functools import partial
 from datetime import datetime
