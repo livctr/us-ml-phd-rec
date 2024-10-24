@@ -1,7 +1,7 @@
 from collections import Counter, defaultdict
 import json
 
-from datasets import Dataset
+import pandas as pd
 import torch
 import torch.nn.functional as F
 from transformers import AutoTokenizer, AutoModel
@@ -72,7 +72,7 @@ class Recommender:
                  frontend_us_professor_path: str = DataPaths.FRONTEND_PROF_PATH,
     ):
         self.embedding_processor = embedding_processor
-        self.ita = Dataset.load_from_disk(ita_path)
+        self.ita = pd.read_csv(ita_path)
         self.embds = torch.load(weights_path, weights_only=True)
         # dictionary with professor names as keys and their metadata as values
         with open(frontend_us_professor_path, 'r') as f:
@@ -87,8 +87,9 @@ class Recommender:
 
     def get_recommended_data(self, top_indices: torch.Tensor):
         """Returns a list of dictionaries with professors corresponding to their information."""
-        selected = self.ita.select(top_indices)
-        professors = selected["authors"]
+        selected = self.ita.iloc[top_indices]
+
+        professors = [x.split("|-|") for x in selected["authors"]]
         professors = [prof for profs in professors for prof in profs]
 
         # rank professors first by number of times appeared in the list
@@ -98,8 +99,12 @@ class Recommender:
 
         # professor to IDs
         professor2ids = defaultdict(list)
-        for pid_, pt, pauthors in zip(selected['id'], selected['title'], selected['authors']):
-            for prof in pauthors:
+        for pid_, pt, pauthors in zip(
+            selected['id'].tolist(),
+            selected['title'].tolist(),
+            selected['authors'].tolist()
+        ):
+            for prof in pauthors.split("|-|"):
                 professor2ids[prof].append((pid_, pt))
 
         # Build professor metadata

@@ -1,3 +1,8 @@
 data/frontend_data/ filter=lfs diff=lfs merge=lfs -text
 data/frontend_data/* filter=lfs diff=lfs merge=lfs -text
 data/frontend_data/**/* filter=lfs diff=lfs merge=lfs -text
+data/frontend_data/us_professor.json filter=lfs diff=lfs merge=lfs -text
+data/frontend_data/all-mpnet-base-v2-embds/weights.pt filter=lfs diff=lfs merge=lfs -text
+data/frontend_data/all-mpnet-base-v2-embds/id_title_author/data-00000-of-00001.arrow filter=lfs diff=lfs merge=lfs -text
+data/frontend_data/all-mpnet-base-v2-embds/id_title_author/dataset_info.json filter=lfs diff=lfs merge=lfs -text
+data/frontend_data/all-mpnet-base-v2-embds/id_title_author/state.json filter=lfs diff=lfs merge=lfs -text

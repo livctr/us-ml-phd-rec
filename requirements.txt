@@ -1,4 +1,4 @@
-datasets
+pandas
 streamlit
 torch
 transformers

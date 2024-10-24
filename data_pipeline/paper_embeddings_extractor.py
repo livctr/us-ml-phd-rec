@@ -214,37 +214,45 @@ def main():
     """Downloads arxiv data and extract embeddings for papers."""
 
     ### Download and filter for ML papers written by U.S. professors ###
-    print("Downloading data...")
-    download_arxiv_data()
-    with open(DataPaths.US_PROF_PATH, 'r') as f:
-        authors_of_interest = json.load(f)
-    authors_of_interest = [author['name'] for author in authors_of_interest]
-    print("Filtering data for ML papers...")
-    filter_arxiv_for_ml(authors_of_interest=authors_of_interest)
+    # print("Downloading data...")
+    # download_arxiv_data()
+    # with open(DataPaths.US_PROF_PATH, 'r') as f:
+    #     authors_of_interest = json.load(f)
+    # authors_of_interest = [author['name'] for author in authors_of_interest]
+    # print("Filtering data for ML papers...")
+    # filter_arxiv_for_ml(authors_of_interest=authors_of_interest)
 
-    ### Create a dataset containing paper info, e.g., title, abstract, authors, etc. ###
-    print("Saving paper data to disk at " + DataPaths.PAPER_DATA_PATH)
-    p2p = get_professors_and_relevant_papers(authors_of_interest)
-    ds = Dataset.from_generator(partial(gen, p2p))
-    ds.save_to_disk(DataPaths.PAPER_DATA_PATH)
+    # ### Create a dataset containing paper info, e.g., title, abstract, authors, etc. ###
+    # print("Saving paper data to disk at " + DataPaths.PAPER_DATA_PATH)
+    # p2p = get_professors_and_relevant_papers(authors_of_interest)
+    # ds = Dataset.from_generator(partial(gen, p2p))
+    # ds.save_to_disk(DataPaths.PAPER_DATA_PATH)
 
-    ### Extract paper embeddings ###
-    print("Extracting embeddings (use GPU if possible)...")
-    # Initialize the embedding processor with model names
-    embedding_processor = EmbeddingProcessor(
-        model_name='sentence-transformers/all-mpnet-base-v2',
-        custom_model_name='salsabiilashifa11/sbert-paper'
-    )
-    # Process dataset and save with embeddings
-    embedding_processor.process_dataset(DataPaths.PAPER_DATA_PATH, DataPaths.EMBD_PATH, batch_size=128)
+    # ### Extract paper embeddings ###
+    # print("Extracting embeddings (use GPU if possible)...")
+    # # Initialize the embedding processor with model names
+    # embedding_processor = EmbeddingProcessor(
+    #     model_name='sentence-transformers/all-mpnet-base-v2',
+    #     custom_model_name='salsabiilashifa11/sbert-paper'
+    # )
+    # # Process dataset and save with embeddings
+    # embedding_processor.process_dataset(DataPaths.PAPER_DATA_PATH, DataPaths.EMBD_PATH, batch_size=128)
 
     ### Create front-end data ###
 
     # Filter ds for paper title, id, authors, and embedding
     embds = Dataset.load_from_disk(DataPaths.EMBD_PATH)
 
+    def join_authors(x):
+        x['authors'] = "|-|".join(x['authors'])
+        return x
+
+    import pdb ; pdb.set_trace()
+
+    embds = embds.map(join_authors)
+
     # save id and title to disk
-    embds.select_columns(['id', 'title', 'authors']).save_to_disk(DataPaths.FRONTEND_ITA_PATH)
+    embds.select_columns(['id', 'title', 'authors']).to_csv(DataPaths.FRONTEND_ITA_PATH)
     # save embeddings as torch tensor
     embds_weights = torch.Tensor(embds['embeddings'])
     torch.save(embds_weights, DataPaths.FRONTEND_WEIGHTS_PATH)
