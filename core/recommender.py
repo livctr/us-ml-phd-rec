@@ -53,6 +53,7 @@ class EmbeddingProcessor:
 
     def process_dataset(self, dataset_path: str, save_path: str, batch_size: int = 128):
         # Load dataset
+        from datasets import Dataset
         ds = Dataset.load_from_disk(dataset_path)
 
         # Compute embeddings and add as a new column
