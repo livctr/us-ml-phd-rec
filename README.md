@@ -83,3 +83,15 @@ python -m data_pipeline.paper_embeddings_extractor
 # Run the streamlit application
 streamlit run USMLPhDRecommender.py
 ```
+
+## HuggingFace Space Configuration
+---
+title: USMLPhDRecommender
+emoji: 😊
+colorFrom: orange
+colorTo: purple
+sdk: streamlit
+sdk_version: "1.25.0"
+app_file: USMLPhDRecommender.py
+pinned: false
+---
