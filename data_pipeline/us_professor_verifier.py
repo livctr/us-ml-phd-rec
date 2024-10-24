@@ -71,7 +71,6 @@ Search results (formatted as a numbered list with link name and snippet). \
 Again, only return the JSON, just with the dictionary and its fields.
 {hits}"""
 
-# import httpx
 def bing_search(person_name, max_retries=0, wait_time=0.5):
     """Performs the bing search `person_name` machine learning professor."""
     query = "{} machine learning professor".format(person_name)
@@ -405,6 +404,7 @@ def retrieve_batch_output(client, batch_id):
         return "INCOMPLETE"
 
 def batch_process_llm_output(client, batches):
+    """Store results from OpenAI batch request."""
     client = OpenAI()
 
     outputs = []
