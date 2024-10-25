@@ -4,8 +4,7 @@ from core.recommender import EmbeddingProcessor, Recommender
 
 st.title("U.S. ML PhD Faculty Advisor Recommender")
 
-st.write("See the code on [GitHub](https://github.com/livctr/us-ml-phd-rec.git) on a disclaimer and how to use.")
-st.write("")
+st.markdown("See the [GitHub](https://github.com/livctr/us-ml-phd-rec.git) for an **important disclaimer** and how to use.")
 
 # Set up
 embedding_processor = EmbeddingProcessor()
@@ -14,9 +13,15 @@ recommender = Recommender(embedding_processor)
 # Query input field
 query = st.text_input("Name an ML research area you are interested in (e.g. low-rank adaptation)")
 
+num_papers = st.selectbox(
+    "Select the number of papers to display",
+    options=[5, 10, 20, 50, 100],
+    index=1  # default value set to 10
+)
+
 # Search and display professors
 if query:
-    top_k_indices = recommender.get_top_k(query, top_k=10)
+    top_k_indices = recommender.get_top_k(query, top_k=num_papers)
     professors_data = recommender.get_recommended_data(top_k_indices)
 
     if professors_data:
